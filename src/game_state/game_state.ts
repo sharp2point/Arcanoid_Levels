@@ -56,7 +56,7 @@ GameState.state = {
     },
     sizes: {
         gameBox: { width: 18, height: 40 },
-        enemy: 1,
+        enemy: 1.2,
         ball: 0.6
     },
     signals: {
@@ -80,7 +80,7 @@ GameState.state = {
     playerProgress: new Map<number, number>()
 };
 //---- ACCSESSORS---------------------------->
-GameState.scene = () => GameState.state.gameObjects.scene;
+GameState.scene = ():Scene => GameState.state.gameObjects.scene;
 GameState.camera = () => GameState.state.gameObjects.camera;
 GameState.gameBox = () => GameState.state.sizes.gameBox;
 GameState.enemyNodes = () => GameState.state.gameObjects.enemyNodes;

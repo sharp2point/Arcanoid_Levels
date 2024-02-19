@@ -42,4 +42,9 @@ export function loadDamageEnemyModel(scene: Scene) {
     ASSETS.containers3D.set("enemy_damage", container as AssetContainer);
   })
 }
+export function loadBuildModel(scene: Scene) {
+  loadModel(`public/models/buildings/`, `sixBorder.glb`, scene).then((container) => {
+    ASSETS.containers3D.set("build_six", container as AssetContainer);
+  })
+}
 export { loadToAssetContainer, mergeMeshes, loadModel, instateMesh };

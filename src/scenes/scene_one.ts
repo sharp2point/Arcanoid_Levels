@@ -35,7 +35,7 @@ export function sceneOne(gravity: Vector3, physicsEngine: HavokPlugin) {
     GameState.state.gameObjects.points = initPoints(scene);
     dragBoxLines();
     addShadowsToObjects(shadowGenArray, scene);
-    
+
 
     //--------- OBSERVER -------->
     addPosition$(() => { });
@@ -63,12 +63,16 @@ export function sceneOne(gravity: Vector3, physicsEngine: HavokPlugin) {
             const agCollider = eventData.collidedAgainst.transformNode;
             if (agCollider.name === "ball" || collider.name === "ball") {
                 if (agCollider.name.includes("enemy-bloc")) {
-                    enemyCollideReaction(agCollider as Mesh);
-                    newPoints("10", agCollider.position);
-                    GameState.calculatePoints(agCollider as Mesh);
-                    if (isAllEnemiesDie()) {
-                        if (GameState.state.gameState !== GameState.state.signals.LEVEL_WIN) {
-                            GameState.changeGameState(GameState.state.signals.LEVEL_WIN);
+                    if (agCollider.name.includes("static")) {
+
+                    } else {
+                        enemyCollideReaction(agCollider as Mesh);
+                        newPoints("10", agCollider.position);
+                        GameState.calculatePoints(agCollider as Mesh);
+                        if (isAllEnemiesDie()) {
+                            if (GameState.state.gameState !== GameState.state.signals.LEVEL_WIN) {
+                                GameState.changeGameState(GameState.state.signals.LEVEL_WIN);
+                            }
                         }
                     }
                 }

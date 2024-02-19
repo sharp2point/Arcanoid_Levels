@@ -2,31 +2,38 @@ import { ASSETS } from "@/game_state/assets/state";
 import { GameState } from "@/game_state/game_state";
 import { appendParticles } from "@/utils/clear_utils";
 import { gameObjectDispose } from "@/utils/utility";
-import { AssetContainer, Color3, Color4, HighlightLayer, Mesh, MeshBuilder, PBRBaseMaterial, PBRMaterial, ParticleSystem, PhysicsBody, PhysicsHelper, PhysicsMotionType, PhysicsRadialImpulseFalloff, PhysicsShapeConvexHull, PointColor, PointLight, Scalar, Scene, ShadowGenerator, SolidParticle, SolidParticleSystem, StandardMaterial, Texture, TransformNode, Vector3, setAndStartTimer } from "@babylonjs/core";
+import {
+    AssetContainer, Color3, Color4,
+    Mesh, MeshBuilder, PBRMaterial, ParticleSystem,
+    PhysicsBody, PhysicsMotionType, PhysicsShapeConvexHull,
+    Scalar, Scene, ShadowGenerator,
+    Tools,
+    TransformNode, Vector3, setAndStartTimer
+} from "@babylonjs/core";
 
 export const ENEMYTYPES = {
-    simple10: {
+    110: {
         level: 1,
         points: 10,
         lifes: 1,
         material: 'enemy-simple10-mt',
         particle: null
     },
-    simple25: {
+    125: {
         level: 2,
         points: 25,
-        lifes: 1,
+        lifes: 2,
         material: 'enemy-simple25-mt',
         particle: null
     },
-    simple50: {
+    150: {
         level: 3,
         points: 50,
         lifes: 3,
         material: 'enemy-simple50-mt',
         particle: null
     },
-    parts: {
+    404: {
         level: 0,
         points: 0,
         lifes: 0,
@@ -35,12 +42,17 @@ export const ENEMYTYPES = {
     }
 }
 
-export function enemy(name: string, type: string, position: Vector3, parent: TransformNode) {
-    const enemy = physicsEnemyFromModel(name, { size: GameState.state.sizes.enemy, position: position }, parent);
-
-    resetEnemy(enemy, ENEMYTYPES[type])
-
-    return enemy;
+export function enemy(name: string, options: { type: number, position: Vector3, angle: number }, parent: TransformNode) {
+    const enemy = physicsEnemyFromModel(name, { size: GameState.state.sizes.enemy, position: options.position }, parent);
+    enemy.rotation.y = Tools.ToRadians(options.angle)
+    appendPhysics(enemy, {
+        mass: GameState.state.physicsMaterial.enemy.mass,
+        shape_material: {
+            restitution: GameState.state.physicsMaterial.enemy.restitution,
+            friction: GameState.state.physicsMaterial.enemy.friction
+        }
+    });
+    return resetEnemy(enemy, options.type);
 }
 export function createEnemyMaterial(scene: Scene) {
     const pbr10 = new PBRMaterial("enemy-simple10-mt", GameState.scene());
@@ -131,6 +143,7 @@ export function addShadowToEnemy(generators: Array<ShadowGenerator>, name: strin
     });
 }
 export function enemyCollideReaction(enemy: Mesh) {
+    console.log("Collide: ", enemy.name)
     if (!reTypeEnemy(enemy)) {
         enemyDamageModelEffect(enemy);
     }
@@ -138,6 +151,7 @@ export function enemyCollideReaction(enemy: Mesh) {
 //------------------------------------------------------------------->
 function reTypeEnemy(enemy: Mesh) {
     const meta = enemy["meta"];
+    console.log("RETYPE: ", meta.level)
 
     switch (meta.level) {
         case 1: {
@@ -145,21 +159,21 @@ function reTypeEnemy(enemy: Mesh) {
             break;
         }
         case 2: {
-            resetEnemy(enemy, ENEMYTYPES.simple10)
+            resetEnemy(enemy, 110)
             break;
         }
         case 3: {
-            resetEnemy(enemy, ENEMYTYPES.simple25);
+            resetEnemy(enemy, 125);
             break;
         }
     }
     return true;
 }
-function resetEnemy(enemy: Mesh, type: any) {
+function resetEnemy(enemy: Mesh, type: number) {
     if (enemy["meta"] && enemy["meta"].particle) {
         (enemy["meta"].particle as ParticleSystem).dispose();
     }
-    enemy["meta"] = type;
+    enemy["meta"] = ENEMYTYPES[type];
     const material = getMaterialByEnemyType(enemy) as PBRMaterial;
     enemy.material = material;
     const color = material.albedoColor;
@@ -174,24 +188,21 @@ function resetEnemy(enemy: Mesh, type: any) {
     prt.start();
 
     enemy["meta"].particle = prt;
+
+    return enemy;
 }
 function physicsEnemyFromModel(name: string, options: { size: number, position: Vector3 }, parent: TransformNode) {
     const inst = ASSETS.containers3D.get("cristal") as AssetContainer;
     const inst_model = inst.instantiateModelsToScene((name) => name);
 
     const model = Mesh.MergeMeshes(inst_model.rootNodes[0].getChildMeshes(), true, false, null, false, false);
+    // const model = MeshBuilder.CreateBox(name, { size: 1.2, updatable: true });
+    // const bbox = model.getBoundingInfo()
+    // console.log("BBox: ", bbox.boundingBox);
     model.scaling = new Vector3(0.6, 0.6, 0.6);
     model.position = options.position;
     model.parent = parent;
     model.name = name;
-
-    appendPhysics(model, {
-        mass: GameState.state.physicsMaterial.enemy.mass,
-        shape_material: {
-            restitution: GameState.state.physicsMaterial.enemy.restitution,
-            friction: GameState.state.physicsMaterial.enemy.friction
-        }
-    });
 
     return model;
 }
@@ -238,8 +249,8 @@ function enemyDamageModelEffect(enemy: Mesh) {
                 color1: new Color4(0.5, 0.4, 0.0, 0.5),
                 color2: Color4.FromColor3(color_enemy, 0.8),
                 color3: new Color4(0.00, 0.00, 0.00, 0.7),
-                capacity: 400, emitRate: 200, max_size: 0.4, updateSpeed: 0.05,
-                emmitBox: new Vector3(0.3, 0.3, 0.3), lifeTime: 3, gravityY: 1
+                capacity: 400, emitRate: 200, max_size: 0.7, updateSpeed: 0.01,
+                emmitBox: new Vector3(0.3, 0.3, 0.3), lifeTime: 1, gravityY: 0.5
             }, GameState.scene());
             prt.start();
             //---------------------------------------

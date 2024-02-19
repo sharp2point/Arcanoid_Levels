@@ -6,7 +6,7 @@ import { AGAME } from "./game_state/main/state";
 import { GameState } from "./game_state/game_state";
 import { UISTATE } from "./game_state/ui/state";
 import { getScreenAspect, loadAssets } from "./utils/clear_utils";
-import { loadDamageEnemyModel, loadEnemyModel } from "./utils/loaderGlbFiles";
+import { loadBuildModel, loadDamageEnemyModel, loadEnemyModel } from "./utils/loaderGlbFiles";
 import { cameraSettings } from "./utils/utility";
 import { createEnemyMaterial } from "./objects/enemy/enemy";
 
@@ -25,16 +25,16 @@ window.addEventListener('load', async () => {
     loadAssets(ASSETS.sprites);
 
     initCore().then(async () => {
-        console.log("INIT SCENE")
         const { sceneOne } = await import("./scenes/scene_one");
         sceneOne(AGAME.Gravity, AGAME.HVK);
         cameraSettings(AGAME.ScreenAspect);
         loadEnemyModel(AGAME.Scene);
         loadDamageEnemyModel(AGAME.Scene);
+        loadBuildModel(AGAME.Scene);
         createEnemyMaterial(AGAME.Scene);
         //-------------------------------------->
         setTimeout(() => {
-            GameState.levelRun(2);
+            GameState.levelRun(0);
         }, 1000);
 
 

@@ -57,42 +57,46 @@ export function debugPhysicsInfo(scene: Scene) {
     // }
 }
 export function cameraSettings(aspect: number) {
-    // console.log("AP: ", aspect);
+    console.log("AP: ", aspect);
     const camera = GameState.camera() as UniversalCamera;
     if (aspect < 0.45) {
         camera.position = new Vector3(0, 16.0, 0);
         camera.target = new Vector3(0, 0, 5);
-        camera.fov = camera.fov = Tools.ToRadians(120);
+        camera.fov =  Tools.ToRadians(120);
     } else if (aspect >= 0.45 && aspect < 0.5) {
         camera.position = new Vector3(0, 15, 0);
         camera.target = new Vector3(0, 0, 5);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.5 && aspect < 0.55) {
         camera.position = new Vector3(0, 15, 0);
         camera.target = new Vector3(0, 0, 5);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.55 && aspect < 0.6) {
         camera.position = new Vector3(0, 14, 0);
         camera.target = new Vector3(0, 0, 5);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.6 && aspect < 0.65) {
         camera.position = new Vector3(0, 14, 0);
         camera.target = new Vector3(0, 0, 5);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.65 && aspect < 0.7) {
         camera.position = new Vector3(0, 13, 0);
         camera.target = new Vector3(0, 0, 4);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.7 && aspect < 0.75) {
         camera.position = new Vector3(0, 12, 0);
         camera.target = new Vector3(0, 0, 3);
-        camera.fov = camera.fov = Tools.ToRadians(115);
+        camera.fov =  Tools.ToRadians(115);
     } else if (aspect >= 0.75 && aspect < 1) {
         camera.position = new Vector3(0, 12, -2);
         camera.target = new Vector3(0, 0, 2);
         camera.fov = Tools.ToRadians(110);
-    } else if (aspect >= 1) {
-        camera.position = new Vector3(0, 15, -10);
+    } else if (aspect >= 1 && aspect < 1.5) {
+        camera.position = new Vector3(0, 12, -13);
+        camera.target = Vector3.Zero();
+        camera.fov = Tools.ToRadians(80);
+    } else if (aspect >= 1.5) {
+        camera.position = new Vector3(0, 12, -13);
         camera.target = Vector3.Zero();
         camera.fov = Tools.ToRadians(80);
     }
