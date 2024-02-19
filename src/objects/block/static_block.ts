@@ -14,14 +14,14 @@ export function staticBlock(name: string, options: { type: number, position: Vec
 
     return model;
 }
-export function animationComposeBlock(name: string, options: { type: number, position: Vector3, angle: number }, parent: TransformNode) {
-    const model = composeModel(`static-${name}`, { type: options.type, position: options.position, angle: options.angle }, parent);
+export function animationComposeBlock(name: string, options: { type: number, position: Vector3 }, parent: TransformNode) {
+    const model = composeModel(`static-${name}`, { type: options.type, position: options.position }, parent);
     const physics = blockShapeMeshPhysics(model);
     physics.setAngularVelocity(new Vector3(0, 0.5, 0))
     return model;
 }
-export function animationGLBBlock(name: string, options: { type: number, position: Vector3, angle: number }, parent: TransformNode) {
-    const model = fromGLBModel(`static-${name}`, { type: options.type, position: options.position, angle: options.angle }, parent);
+export function animationGLBBlock(name: string, options: { type: number, position: Vector3 }, parent: TransformNode) {
+    const model = fromGLBModel(`static-${name}`, { type: options.type, position: options.position }, parent);
     const physics = blockShapeMeshPhysics(model);
     physics.setAngularVelocity(new Vector3(0, 0.5, 0))
     return model;
@@ -34,10 +34,10 @@ function blockModel(name: string, options: { type: number, position: Vector3, an
     model.setParent(parent);
     return model;
 }
-function composeModel(name: string, options: { type: number, position: Vector3, angle: number }, parent: TransformNode) {
-    const model = MeshBuilder.CreateCylinder(name, { height: 0.8, diameter: 7.5, tessellation: 5, subdivisions: 3 }, GameState.scene());
-    const model2 = MeshBuilder.CreateCylinder(name, { height: 1, diameter: 6.5, tessellation: 5, subdivisions: 3 }, GameState.scene());
-    const model3 = MeshBuilder.CreateBox(name, { width: 5, height: 1, depth: 3 }, GameState.scene());
+function composeModel(name: string, options: { type: number, position: Vector3 }, parent: TransformNode) {
+    const model = MeshBuilder.CreateCylinder(name, { height: 0.8, diameter: 5.5, tessellation: 5, subdivisions: 3 }, GameState.scene());
+    const model2 = MeshBuilder.CreateCylinder(name, { height: 1, diameter: 4.5, tessellation: 5, subdivisions: 3 }, GameState.scene());
+    const model3 = MeshBuilder.CreateBox(name, { width: 5, height: 1, depth: 2 }, GameState.scene());
     model3.rotation.y = Tools.ToRadians(33);
     model3.position = new Vector3(3, 0, -2.2)
     const csg1 = CSG.FromMesh(model);
@@ -59,15 +59,17 @@ function composeModel(name: string, options: { type: number, position: Vector3, 
 
     return m.toMesh(name, null, GameState.scene(), false);
 }
-function fromGLBModel(name: string, options: { type: number, position: Vector3, angle: number }, parent: TransformNode) {
+function fromGLBModel(name: string, options: { type: number, position: Vector3 }, parent: TransformNode) {
     const inst = ASSETS.containers3D.get("build_six") as AssetContainer;
     const inst_model = inst.instantiateModelsToScene((name) => name);
 
     const meshes = inst_model.rootNodes[0].getChildMeshes() as Array<Mesh>;
 
     const model = Mesh.MergeMeshes(meshes, true);
+
     model.rotation.x = Tools.ToRadians(90);
-    model.position = options.position;
+    model.scaling = new Vector3(0.6, 0.6, 1);
+    model.position = options.position.add(new Vector3(0, 0.3, 0));
 
     return model;
 }

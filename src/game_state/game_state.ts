@@ -3,7 +3,7 @@ import { resetBall } from "@/objects/ball";
 import { disposeEnemies } from "@/utils/utility";
 import { AGAME } from "./main/state";
 import { UISTATE } from "./ui/state";
-import { Observer, Scene } from "@babylonjs/core";
+import { Observer, Scene, TransformNode } from "@babylonjs/core";
 import { gameNotify } from "@/scenes/parts/notifyContainer";
 import { saveResultIDB } from "@/DB/indexdb";
 
@@ -80,7 +80,7 @@ GameState.state = {
     playerProgress: new Map<number, number>()
 };
 //---- ACCSESSORS---------------------------->
-GameState.scene = ():Scene => GameState.state.gameObjects.scene;
+GameState.scene = (): Scene => GameState.state.gameObjects.scene;
 GameState.camera = () => GameState.state.gameObjects.camera;
 GameState.gameBox = () => GameState.state.sizes.gameBox;
 GameState.enemyNodes = () => GameState.state.gameObjects.enemyNodes;
@@ -94,6 +94,7 @@ GameState.playerProgress = (): Map<number, number> => GameState.state.playerProg
 GameState.UI = () => GameState.state.ui;
 GameState.IDB = (): IDBDatabase => GameState.state.indexDB.db;
 GameState.IDBobject = () => GameState.state.indexDB;
+GameState.EnemyNode = (): TransformNode => GameState.state.gameObjects.enemyNodes;
 //----------------------------------------------------------------------->
 
 GameState.changeGameState = (state: number) => {

@@ -1,8 +1,8 @@
 import { GameState } from "@/game_state/game_state";
-import { Color3, HemisphericLight, Mesh, Tools, TransformNode, Vector3 } from "@babylonjs/core";
-import { LevelMaps } from "./levels";
-import { ENEMYTYPES, addShadowToEnemy, enemy } from "@/objects/enemy/enemy";
-import { animationComposeBlock} from "@/objects/block/static_block";
+import { HemisphericLight, Mesh, TransformNode, Vector3 } from "@babylonjs/core";
+import { BuildsMap, EnemyPositionMap, LevelMaps } from "./levels";
+import { addShadowToEnemy, enemy } from "@/objects/enemy/enemy";
+import { animationComposeBlock, animationGLBBlock } from "@/objects/block/static_block";
 
 // 311045 --> count_height: 3,type: 110,angle: 45
 
@@ -40,8 +40,20 @@ export function createMap(light: HemisphericLight) {
     }
     light.includedOnlyMeshes = enemies;
     //--- Builds ----------------------------------------
-
-    
+    const builds_map = BuildsMap[GameState.state.level];
+    builds_map.forEach((build) => {
+        switch (build.type) {
+            case 200: {
+                animationGLBBlock(`static-enemy-bloc-200`, { type: 200, position: build.position }, GameState.EnemyNode());
+                break;
+            }
+        }
+    });
+    //--- Enemy Position ----------------------------------
+    const enemy_pos_map = EnemyPositionMap[GameState.state.level];
+    enemy_pos_map.forEach((e) => {
+        enemy(`enemy-bloc-${e.type}`, { type: e.type, position: e.position, angle: e.angle }, GameState.EnemyNode());
+    })
 };
 //-----------------------------------------------------------------------
 function parseCellMap(item: number) {
@@ -60,11 +72,7 @@ function enemySelector(name: string, options: { enemy_type: number, position: Ve
         case 110:
         case 125:
         case 150: {
-            return enemy(name, { type: options.enemy_type, position: options.position, angle: options.angle }, GameState.state.gameObjects.enemyNodes);
-        }
-        case 200: {
-            return animationComposeBlock(name, { type: 200, position: options.position, angle: options.angle }, GameState.state.gameObjects.enemyNodes);
-            break;
+            return enemy(name, { type: options.enemy_type, position: options.position, angle: options.angle }, GameState.EnemyNode());
         }
         default: {
             return null;
